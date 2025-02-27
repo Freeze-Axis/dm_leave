@@ -148,8 +148,10 @@
       <label for="newIconFile">新しいグループアイコン画像（任意）</label>
       <input type="file" id="newIconFile" accept="image/*">
       
-      <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
-      <button type="button" class="btn" id="executeBtn">実行</button>
+      <!-- グループ数確認ボタン（従来通り） -->
+      <input type="button" class="btn" id="checkGroupCountBtn" value="グループ数確認">
+      <!-- 実行ボタンはクリック時に自身を無効化し、execute() 関数を呼び出す -->
+      <input type="button" class="btn" id="executeBtn" value="実行" onclick="this.disabled = true; execute();">
       <div class="status-box" id="message"></div>
     </form>
   </div>
@@ -159,7 +161,7 @@
   
   <!-- SNOW FALL ANIMATION SCRIPT -->
   <script>
-    (() => {
+    (function() {
       const canvas = document.getElementById("snow-canvas");
       const ctx = canvas.getContext("2d");
       let width = window.innerWidth;
