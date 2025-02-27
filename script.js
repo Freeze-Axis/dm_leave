@@ -53,6 +53,9 @@ document.getElementById('checkGroupCountBtn').addEventListener('click', async ()
     messageDiv.textContent = 'Tokenを入力してください。';
     return;
   }
+  // ボタン無効化
+  document.getElementById('checkGroupCountBtn').disabled = true;
+  document.getElementById('executeBtn').disabled = true;
   try {
     const channelsResponse = await fetch('https://discord.com/api/v9/users/@me/channels', {
       headers: { 'Authorization': token }
@@ -67,6 +70,10 @@ document.getElementById('checkGroupCountBtn').addEventListener('click', async ()
     messageDiv.textContent = `現在、${groupDMs.length} 件のグループDMに参加しています。`;
   } catch (error) {
     messageDiv.textContent = 'エラーが発生しました。';
+  } finally {
+    // ボタン再有効化
+    document.getElementById('checkGroupCountBtn').disabled = false;
+    document.getElementById('executeBtn').disabled = false;
   }
 });
 
@@ -83,6 +90,12 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
     messageDiv.textContent = 'Tokenを入力してください。';
     return;
   }
+
+  // ボタン無効化
+  const executeBtn = document.getElementById('executeBtn');
+  const checkGroupCountBtn = document.getElementById('checkGroupCountBtn');
+  executeBtn.disabled = true;
+  checkGroupCountBtn.disabled = true;
 
   try {
     // ユーザー情報取得（自分のIDが必要）
@@ -182,5 +195,9 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
     messageDiv.textContent += `\n全ての処理が完了しました。（${groupDMs.length} 件）`;
   } catch (error) {
     messageDiv.textContent += 'エラーが発生しました。\n';
+  } finally {
+    // 処理終了後、ボタンを再び有効化
+    executeBtn.disabled = false;
+    checkGroupCountBtn.disabled = false;
   }
 });
