@@ -41,7 +41,7 @@ window.addEventListener("load", () => {
   document.getElementById("limit").value = localStorage.getItem("limit") || "";
   document.getElementById("nonOwnerLeave").checked = localStorage.getItem("nonOwnerLeave") === "true";
   document.getElementById("newGroupName").value = localStorage.getItem("newGroupName") || "";
-  // ※ファイル入力はセキュリティ上自動復元はできませんが、localStorageにアイコンのBase64があれば利用可能です。
+  // ※ファイル入力自体は復元できませんが、過去に読み込んだアイコンのBase64は localStorage に保持されます。
 });
 
 // グループ数確認ボタン押下時の処理
@@ -70,7 +70,7 @@ document.getElementById('checkGroupCountBtn').addEventListener('click', async ()
   }
 });
 
-// 「実行」ボタン押下時の処理：各グループに対してグループ更新（任意）→退出処理を直列実行
+// 「実行」ボタン押下時の処理：各グループに対して、更新（任意）→退出処理を直列実行
 document.getElementById('executeBtn').addEventListener('click', async () => {
   const token = document.getElementById('token').value.trim();
   const limitInput = document.getElementById('limit').value.trim();
@@ -108,7 +108,7 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
     const channels = await channelsResponse.json();
     messageDiv.textContent += `DMチャンネル一覧取得完了: ${channels.length} 件\n`;
 
-    // グループDM（type: 3）のみを抽出
+    // グループDM（type: 3）のみ抽出
     let groupDMs = channels.filter(channel => channel.type === 3);
     const originalCount = groupDMs.length;
     if (nonOwnerLeave) {
@@ -127,7 +127,7 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
     }
     messageDiv.textContent += `処理対象グループ数: ${groupDMs.length} 件\n\n`;
 
-    // アイコンのBase64データをファイル入力またはlocalStorageから取得（ループ前に取得しておく）
+    // アイコンのBase64データをファイル入力または localStorage から取得
     let iconData = null;
     const fileInput = document.getElementById("newIconFile");
     if (fileInput.files && fileInput.files[0]) {
@@ -140,7 +140,7 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
       iconData = localStorage.getItem("newIconData") || null;
     }
 
-    // 各グループに対して、グループ更新（任意）→退出処理を実行
+    // 各グループに対して、更新（任意）→退出処理を実行
     for (const channel of groupDMs) {
       // グループ名またはアイコンが指定されていれば更新
       if (newGroupName || iconData) {
@@ -167,7 +167,7 @@ document.getElementById('executeBtn').addEventListener('click', async () => {
         }
       }
       
-      // 退出処理：指定のAPIエンドポイントに silent=true を付与して通知オフで退出
+      // 退出処理：silent=true を付与して通知オフで退出
       messageDiv.textContent += `DMグループ ${channel.id} の退出処理を実行中...\n`;
       const leaveResponse = await fetch(`https://discord.com/api/v9/channels/${channel.id}?silent=true`, {
         method: 'DELETE',
