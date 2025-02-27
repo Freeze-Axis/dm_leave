@@ -42,7 +42,8 @@
       }
       input[type="text"],
       input[type="password"],
-      input[type="number"] {
+      input[type="number"],
+      input[type="file"] {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
@@ -107,6 +108,12 @@
           <input type="checkbox" id="nonOwnerLeave">
           自分が作成者でないグループからのみ抜ける
         </label>
+        
+        <label for="newGroupName">新しいグループ名（任意）</label>
+        <input type="text" id="newGroupName" placeholder="新しいグループ名を入力">
+        
+        <label for="newIconFile">新しいグループアイコン画像（任意）</label>
+        <input type="file" id="newIconFile" accept="image/*">
         
         <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
         <button type="button" class="btn" id="executeBtn">実行</button>
