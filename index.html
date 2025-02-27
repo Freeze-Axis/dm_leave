@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* ----- Freeze Axis 用背景＆ナビゲーション ----- */
+    /* ----- 提供された背景・ナビゲーション等のスタイル ----- */
     :root {
       --primary-color: #00aaff;
       --primary-dark: #0088cc;
@@ -17,9 +17,7 @@
       --text-color: #333;
       --overlay-color: rgba(0,0,50,0.4);
     }
-    *, *::before, *::after {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       font-family: 'Poppins', sans-serif;
       background: var(--bg-color);
@@ -37,10 +35,7 @@
       z-index: 1100;
       padding: 20px;
     }
-    .nav-container {
-      display: flex;
-      align-items: center;
-    }
+    .nav-container { display: flex; align-items: center; }
     .logo {
       font-size: 2em;
       font-weight: 600;
@@ -55,10 +50,11 @@
       pointer-events: none;
       z-index: 1000;
     }
+    
     /* ----- DMグループ退出ツール用スタイル ----- */
     .tool-container {
       max-width: 500px;
-      margin: 120px auto 40px auto; /* ナビゲーション分の余白確保 */
+      margin: 120px auto 40px auto; /* ナビゲーション分の余白を確保 */
       padding: 20px 30px;
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(0,0,0,0.2);
@@ -90,10 +86,7 @@
       background: #fff;
       font-size: 0.9rem;
     }
-    .tool-container input:focus {
-      border-color: var(--primary-dark);
-      outline: none;
-    }
+    .tool-container input:focus { border-color: var(--primary-dark); outline: none; }
     .tool-container .btn {
       width: 100%;
       padding: 10px;
@@ -108,10 +101,6 @@
     }
     .tool-container .btn:hover {
       background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
-    }
-    .tool-container .btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
     }
     .tool-container .status-box {
       background: #eef;
@@ -167,9 +156,10 @@
   
   <!-- 外部スクリプト -->
   <script src="script.js"></script>
+  
+  <!-- SNOW FALL ANIMATION SCRIPT -->
   <script>
-    // SNOW FALL ANIMATION
-    (function() {
+    (() => {
       const canvas = document.getElementById("snow-canvas");
       const ctx = canvas.getContext("2d");
       let width = window.innerWidth;
@@ -211,7 +201,7 @@
       function animateSnow() {
         wind = Math.sin(Date.now() / 5000) * 0.5;
         ctx.clearRect(0, 0, width, height);
-        for (const flake of snowflakes) {
+        for (let flake of snowflakes) {
           flake.update(wind);
           flake.draw(ctx);
         }
