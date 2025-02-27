@@ -42,8 +42,7 @@
       }
       input[type="text"],
       input[type="password"],
-      input[type="number"],
-      input[type="file"] {
+      input[type="number"] {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
@@ -101,25 +100,13 @@
         <label for="token">Token</label>
         <input type="password" id="token" placeholder="DMグループから抜けたいアカウントのTokenを入力">
         
-        <label for="limit">抜ける数 (指定しない場合は全グループ)</label>
+        <label for="limit">抜ける数 (指定しなければ全グループ)</label>
         <input type="number" id="limit" placeholder="抜けるグループ数" min="1">
 
-        <label>
-          <input type="checkbox" id="allLeave">
-          全てのグループから抜ける (チェックすると件数指定を無視し、かつグループ名／アイコン更新が有効になります)
-        </label>
-        
-        <!-- ここで新規追加 -->
         <label>
           <input type="checkbox" id="nonOwnerLeave">
           自分が作成者でないグループからのみ抜ける
         </label>
-
-        <label for="newGroupName">新しいグループ名（任意）</label>
-        <input type="text" id="newGroupName" placeholder="新しいグループ名を入力">
-        
-        <label for="newIconFile">新しいグループアイコン画像（任意）</label>
-        <input type="file" id="newIconFile" accept="image/*">
         
         <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
         <button type="button" class="btn" id="executeBtn">実行</button>
