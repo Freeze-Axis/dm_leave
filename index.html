@@ -13,6 +13,8 @@
       --primary-dark: #0088cc;
       --bg-color: #f0f8ff;
       --text-color: #333;
+      --stop-color: #e74c3c;
+      --stop-dark: #c0392b;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -54,54 +56,40 @@
       border: none; border-radius: 5px; cursor: pointer;
       background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
       color: #fff; margin-bottom: 10px;
+      transition: background 0.2s;
     }
     .tool-container .btn:hover { background: linear-gradient(45deg, var(--primary-dark), var(--primary-color)); }
-    .tool-container .btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+    .tool-container .btn.stop {
+      background: linear-gradient(45deg, var(--stop-color), var(--stop-dark));
+    }
+    .tool-container .btn.stop:hover {
+      background: linear-gradient(45deg, var(--stop-dark), var(--stop-color));
+    }
     .tool-container .status-box {
       background: #eef; border: 1px solid var(--primary-color);
       border-radius: 5px; padding: 10px; margin-top: 15px;
       min-height: 100px; max-height: 300px; overflow-y: auto;
       white-space: pre-wrap; font-size: 0.8rem;
     }
-
-    /* ファイル入力＋削除＋プレビュー横並び */
-    .icon-input-wrapper {
-      display: flex; align-items: center; margin-bottom: 15px;
-    }
-    /* 非表示ファイル入力 */
-    .custom-file-upload input[type="file"] {
-      display: none;
-    }
-    /* カスタムボタン */
+    .icon-input-wrapper { display: flex; align-items: center; margin-bottom: 15px; }
+    .custom-file-upload input[type="file"] { display: none; }
     .custom-file-upload {
-      display: inline-block;
-      padding: 6px 12px;
-      background: var(--primary-color);
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: bold;
-      user-select: none;
+      display: inline-block; padding: 6px 12px;
+      background: var(--primary-color); color: #fff;
+      border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
+      user-select: none; margin-right: 8px;
     }
-    .custom-file-upload:hover {
-      background: var(--primary-dark);
-    }
-
+    .custom-file-upload:hover { background: var(--primary-dark); }
     #clearIconBtn {
-      margin-left: 8px; padding: 6px 10px; font-size: 0.8rem;
+      padding: 6px 10px; font-size: 0.8rem;
       background: #999; color: #fff; border: none; border-radius: 4px;
       cursor: pointer; display: none;
     }
     #clearIconBtn:hover { background: #777; }
-
     #iconPreview {
-      display: none; margin-left: 8px;
-      max-width: 48px; max-height: 48px;
+      display: none; max-width: 48px; max-height: 48px;
       border: 1px solid #ccc; border-radius: 4px;
     }
-
-    /* スイッチスタイル */
     .switch {
       position: relative; display: inline-block; width: 50px; height: 24px;
       vertical-align: middle; margin-left: 10px;
@@ -175,7 +163,7 @@
           this.r=Math.random()*3+1; this.vy=Math.random()*1+0.5;
           this.vx=Math.random()*0.5-0.25; this.o=Math.random()*0.5+0.5;}
         update(){this.x+=this.vx+wind; this.y+=this.vy;
-          if(this.y>h) this.reset(); if(this.x> w||this.x<0) this.x=(this.x+w)%w;}
+          if(this.y>h) this.reset(); if(this.x>w||this.x<0) this.x=(this.x+w)%w;}
         draw(){ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
           ctx.fillStyle=`rgba(255,255,255,${this.o})`; ctx.fill();}
       }
@@ -226,7 +214,7 @@
     nonOwnerCB.addEventListener("change", saveSettings);
     leaveNotifySwitch.addEventListener("change", saveSettings);
 
-    // アイコンプレビュー制御
+    // アイコンプレビュー更新
     function updateIconUI(){
       const data = localStorage.newIconData;
       if(data){
@@ -234,13 +222,10 @@
         iconPreview.style.display = "inline-block";
         clearBtn.style.display = "inline-block";
       } else {
-        iconPreview.src = "";
         iconPreview.style.display = "none";
         clearBtn.style.display = "none";
       }
     }
-
-    // ページロード時復元
     window.addEventListener("load", ()=>{
       tokenInput.value        = localStorage.token || "";
       limitInput.value        = localStorage.limit || "";
@@ -249,17 +234,12 @@
       leaveNotifySwitch.checked = localStorage.leaveNotify!=="false";
       updateIconUI();
     });
-
-    // ファイル選択時
     fileInput.addEventListener("change", async ()=>{
       if(fileInput.files[0]){
-        const b64 = await readFileAsDataURL(fileInput.files[0]);
-        localStorage.newIconData = b64;
+        localStorage.newIconData = await readFileAsDataURL(fileInput.files[0]);
       }
       updateIconUI();
     });
-
-    // 削除ボタン
     clearBtn.addEventListener("click", ()=>{
       delete localStorage.newIconData;
       fileInput.value = "";
@@ -285,86 +265,115 @@
       }
     });
 
-    // 実行／停止ボタン
-    execBtn.addEventListener("click", async ()=>{
-      if(execBtn.disabled) return;
+    // 実行／停止制御（AbortController）
+    let abortController = null;
+    execBtn.addEventListener("click", async () => {
+      if (execBtn.textContent === "停止") {
+        // 停止リクエスト
+        if (abortController) {
+          abortController.abort();
+          msgBox.textContent += "\n処理を即時中断しています…";
+        }
+        return;
+      }
+
+      // 実行リクエスト
       execBtn.textContent = "停止";
-      execBtn.disabled    = true;
-      msgBox.textContent  = "";
+      execBtn.classList.add("stop");
+      msgBox.textContent   = "";
+      abortController      = new AbortController();
+      const signal         = abortController.signal;
 
       const token = tokenInput.value.trim();
-      if(!token){
-        msgBox.textContent="Tokenを入力してください。";
-        execBtn.textContent="実行"; execBtn.disabled=false;
+      if (!token) {
+        msgBox.textContent = "Tokenを入力してください。";
+        execBtn.textContent = "実行";
+        execBtn.classList.remove("stop");
         return;
       }
 
       try {
+        msgBox.textContent += "ユーザー情報取得...\n";
         const ures = await fetch("https://discord.com/api/v9/users/@me", {
-          headers:{ Authorization: token }
+          headers: { Authorization: token },
+          signal
         });
-        if(!ures.ok){ msgBox.textContent="無効なTokenです。"; return; }
+        if (!ures.ok) {
+          msgBox.textContent = "無効なTokenです。";
+          return;
+        }
         const me = await ures.json();
 
-        msgBox.textContent+="DM一覧取得...\n";
+        msgBox.textContent += "DM一覧取得...\n";
         const cres = await fetch("https://discord.com/api/v9/users/@me/channels", {
-          headers:{ Authorization: token }
+          headers: { Authorization: token },
+          signal
         });
         const channels = await cres.json();
-        msgBox.textContent+=`取得 ${channels.length} 件\n`;
+        msgBox.textContent += `取得 ${channels.length} 件\n`;
 
-        let groups = channels.filter(c=>c.type===3);
+        let groups = channels.filter(c => c.type === 3);
         const orig = groups.length;
-        if(nonOwnerCB.checked){
-          groups = groups.filter(c=>c.owner_id!==me.id);
-          msgBox.textContent+=`作成者でない: ${groups.length}/${orig}\n\n`;
+        if (nonOwnerCB.checked) {
+          groups = groups.filter(c => c.owner_id !== me.id);
+          msgBox.textContent += `作成者でない: ${groups.length}/${orig}\n\n`;
         } else {
-          msgBox.textContent+=`対象: ${groups.length} 件\n\n`;
+          msgBox.textContent += `対象: ${groups.length} 件\n\n`;
         }
-
-        if(limitInput.value){
-          const n=parseInt(limitInput.value);
-          if(!isNaN(n)&&n>0) groups=groups.slice(0,n);
+        if (limitInput.value) {
+          const n = parseInt(limitInput.value, 10);
+          if (!isNaN(n) && n > 0) groups = groups.slice(0, n);
         }
-        msgBox.textContent+=`処理数: ${groups.length} 件\n\n`;
+        msgBox.textContent += `処理数: ${groups.length} 件\n\n`;
 
-        let iconData = localStorage.newIconData||null;
-        if(fileInput.files[0]){
+        let iconData = localStorage.newIconData || null;
+        if (fileInput.files[0]) {
           iconData = await readFileAsDataURL(fileInput.files[0]);
         }
 
-        for(const ch of groups){
-          if(newNameInput.value.trim()||iconData){
-            msgBox.textContent+=`更新 ${ch.id}...\n`;
-            const body={};
-            if(newNameInput.value.trim()) body.name=newNameInput.value.trim();
-            if(iconData) body.icon=iconData;
-            const up=await fetch(`https://discord.com/api/v9/channels/${ch.id}`, {
-              method:"PATCH",
-              headers:{
+        for (const ch of groups) {
+          // 更新
+          if (newNameInput.value.trim() || iconData) {
+            msgBox.textContent += `更新 ${ch.id}...\n`;
+            const body = {};
+            if (newNameInput.value.trim()) body.name = newNameInput.value.trim();
+            if (iconData) body.icon = iconData;
+            const up = await fetch(`https://discord.com/api/v9/channels/${ch.id}`, {
+              method: "PATCH",
+              headers: {
                 Authorization: token,
-                "Content-Type":"application/json"
+                "Content-Type": "application/json"
               },
-              body:JSON.stringify(body)
+              body: JSON.stringify(body),
+              signal
             });
-            msgBox.textContent+=up.ok?"更新成功\n":"更新失敗\n";
+            msgBox.textContent += up.ok ? "更新成功\n" : "更新失敗\n";
           }
-          msgBox.textContent+=`退出 ${ch.id}...\n`;
-          const silentParam = leaveNotifySwitch.checked?"":"?silent=true";
-          const lr=await fetch(
+          // 退出
+          msgBox.textContent += `退出 ${ch.id}...\n`;
+          const silentParam = leaveNotifySwitch.checked ? "" : "?silent=true";
+          const lr = await fetch(
             `https://discord.com/api/v9/channels/${ch.id}${silentParam}`, {
-            method:"DELETE",
-            headers:{ Authorization: token }
-          });
-          msgBox.textContent+=lr.ok?"退出成功\n":"退出失敗\n";
+              method: "DELETE",
+              headers: { Authorization: token },
+              signal
+            }
+          );
+          msgBox.textContent += lr.ok ? "退出成功\n" : "退出失敗\n";
         }
-        msgBox.textContent+=`\n完了: ${groups.length} 件`;
-      } catch(e) {
-        console.error(e);
-        msgBox.textContent+="エラーが発生しました。\n";
+
+        msgBox.textContent += `\n完了: ${groups.length} 件`;
+      } catch (err) {
+        if (err.name === "AbortError") {
+          msgBox.textContent += "\n処理を中断しました。\n";
+        } else {
+          console.error(err);
+          msgBox.textContent += "\nエラーが発生しました。\n";
+        }
       } finally {
-        execBtn.textContent="実行";
-        execBtn.disabled=false;
+        execBtn.textContent = "実行";
+        execBtn.classList.remove("stop");
+        abortController = null;
       }
     });
   </script>
