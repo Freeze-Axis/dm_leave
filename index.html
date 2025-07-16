@@ -15,6 +15,8 @@
       --text-color: #333;
       --stop-color: #e74c3c;
       --stop-dark: #c0392b;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
     }
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -22,43 +24,111 @@
       background: var(--bg-color);
       color: var(--text-color);
       line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 20px;
     }
     nav {
       position: fixed; top: 0; left: 0; width: 100%;
       background: var(--primary-color);
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      padding: 20px; z-index: 1100;
+      padding: 15px 20px; z-index: 1100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .logo { font-size: 2em; font-weight: 600; color: #fff; }
-    #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000; }
-
+    .logo { font-size: 1.8em; font-weight: 600; color: #fff; }
     .tool-container {
-      max-width: 500px; margin: 120px auto 40px; padding: 20px 30px;
-      background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.2);
-      border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      max-width: 550px; margin: 100px auto 40px; padding: 25px 30px;
+      background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15);
       font-family: 'Roboto Mono', monospace;
     }
     .tool-container h1 {
-      font-family: 'Cinzel', serif; text-align: center; margin-bottom: 20px;
+      font-family: 'Cinzel', serif; text-align: center; margin-bottom: 25px;
       color: var(--primary-color);
+      font-size: 1.8rem;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-    .tool-container label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group { margin-bottom: 20px; }
+    .tool-container label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: bold;
+      color: #444;
+    }
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 15px;
+    }
     .tool-container input[type="text"],
     .tool-container input[type="password"],
     .tool-container input[type="number"] {
-      width: 100%; padding: 10px; margin-bottom: 15px;
-      border: 1px solid var(--primary-color); border-radius: 5px;
-      background: #fff; font-size: 0.9rem;
+      width: 100%; padding: 12px 15px; 
+      border: 1px solid #ddd; border-radius: 8px;
+      background: #fff; font-size: 0.95rem;
+      transition: border 0.3s, box-shadow 0.3s;
     }
-    .tool-container input:focus { border-color: var(--primary-dark); outline: none; }
+    .tool-container input:focus { 
+      border-color: var(--primary-color); 
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+    }
+    .password-container {
+      display: flex;
+      align-items: center;
+    }
+    .password-container input {
+      flex: 1;
+      padding-right: 45px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      background: none;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password svg {
+      width: 100%;
+      height: 100%;
+    }
+    .eye-icon {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     .tool-container .btn {
-      width: 100%; padding: 10px; font-size: 1rem; font-weight: bold;
-      border: none; border-radius: 5px; cursor: pointer;
+      width: 100%; padding: 12px; font-size: 1rem; font-weight: bold;
+      border: none; border-radius: 8px; cursor: pointer;
       background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-      color: #fff; margin-bottom: 10px;
-      transition: background 0.2s;
+      color: #fff; margin-bottom: 12px;
+      transition: all 0.2s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-    .tool-container .btn:hover { background: linear-gradient(45deg, var(--primary-dark), var(--primary-color)); }
+    .tool-container .btn:hover { 
+      background: linear-gradient(45deg, var(--primary-dark), var(--primary-color)); 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    .tool-container .btn:active {
+      transform: translateY(0);
+    }
+    .tool-container .btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
     .tool-container .btn.stop {
       background: linear-gradient(45deg, var(--stop-color), var(--stop-dark));
     }
@@ -66,29 +136,56 @@
       background: linear-gradient(45deg, var(--stop-dark), var(--stop-color));
     }
     .tool-container .status-box {
-      background: #eef; border: 1px solid var(--primary-color);
-      border-radius: 5px; padding: 10px; margin-top: 15px;
-      min-height: 100px; max-height: 300px; overflow-y: auto;
-      white-space: pre-wrap; font-size: 0.8rem;
+      background: #f8f9ff; border: 1px solid #d0e0ff;
+      border-radius: 8px; padding: 15px; margin-top: 20px;
+      min-height: 150px; max-height: 300px; overflow-y: auto;
+      white-space: pre-wrap; font-size: 0.85rem;
+      line-height: 1.5;
+      font-family: 'Roboto Mono', monospace;
     }
-    .icon-input-wrapper { display: flex; align-items: center; margin-bottom: 15px; }
+    .tool-container .status-box .success {
+      color: var(--success-color);
+    }
+    .tool-container .status-box .error {
+      color: var(--stop-color);
+    }
+    .tool-container .status-box .warning {
+      color: var(--warning-color);
+    }
+    .icon-input-wrapper { 
+      display: flex; 
+      align-items: center; 
+      margin-bottom: 15px;
+      gap: 10px;
+    }
     .custom-file-upload input[type="file"] { display: none; }
     .custom-file-upload {
-      display: inline-block; padding: 6px 12px;
+      display: inline-block; padding: 8px 16px;
       background: var(--primary-color); color: #fff;
-      border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
-      user-select: none; margin-right: 8px;
+      border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
+      user-select: none; 
+      transition: background 0.2s;
     }
     .custom-file-upload:hover { background: var(--primary-dark); }
     #clearIconBtn {
-      padding: 6px 10px; font-size: 0.8rem;
-      background: #999; color: #fff; border: none; border-radius: 4px;
-      cursor: pointer; display: none;
+      padding: 8px 14px; font-size: 0.85rem;
+      background: #999; color: #fff; border: none; border-radius: 6px;
+      cursor: pointer; 
+      transition: background 0.2s;
     }
     #clearIconBtn:hover { background: #777; }
     #iconPreview {
-      display: none; max-width: 48px; max-height: 48px;
-      border: 1px solid #ccc; border-radius: 4px;
+      max-width: 48px; max-height: 48px;
+      border: 1px solid #ddd; border-radius: 6px;
+      object-fit: contain;
+      background: #f5f5f5;
+      display: none;
+    }
+    .switch-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      user-select: none;
     }
     .switch {
       position: relative; display: inline-block; width: 50px; height: 24px;
@@ -106,276 +203,501 @@
     }
     input:checked + .slider { background-color: var(--primary-color); }
     input:checked + .slider:before { transform: translateX(26px); }
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #777;
+      font-size: 0.85rem;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-group .btn {
+      flex: 1;
+    }
+
+    @media (max-width: 600px) {
+      .tool-container {
+        margin: 90px 15px 30px;
+        padding: 20px;
+      }
+      nav {
+        padding: 12px 15px;
+      }
+      .logo {
+        font-size: 1.5rem;
+      }
+      .tool-container h1 {
+        font-size: 1.5rem;
+      }
+      .btn-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
   </style>
 </head>
 <body>
-  <canvas id="snow-canvas"></canvas>
-  <nav><div class="logo">Freeze</div></nav>
+  <nav>
+    <div class="logo">Freeze</div>
+  </nav>
 
   <div class="tool-container">
     <h1>DMグループ退出ツール</h1>
     <form id="leaveForm">
-      <label for="token">Token</label>
-      <input type="password" id="token" placeholder="Tokenを入力">
-
-      <label for="limit">抜ける数 (指定しなければ全グループ)</label>
-      <input type="number" id="limit" placeholder="グループ数を指定" min="1">
-
-      <label>
-        <input type="checkbox" id="nonOwnerLeave">
-        自分が作成者でないグループのみ抜ける
-      </label>
-
-      <label for="newGroupName">新しいグループ名（任意）</label>
-      <input type="text" id="newGroupName" placeholder="新しいグループ名を入力">
-
-      <label>新しいグループアイコン画像（任意）</label>
-      <div class="icon-input-wrapper">
-        <label class="custom-file-upload">
-          ファイルを選択
-          <input type="file" id="newIconFile" accept="image/*">
-        </label>
-        <button type="button" id="clearIconBtn">削除</button>
-        <img id="iconPreview" alt="アイコンプレビュー">
+      <div class="form-group">
+        <label for="token">Discord Token</label>
+        <div class="input-wrapper">
+          <div class="password-container">
+            <input type="password" id="token" placeholder="トークンを入力" autocomplete="off">
+            <button type="button" class="toggle-password" id="toggleToken">
+              <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <label>
-        退出通知を残す
-        <label class="switch">
-          <input type="checkbox" id="leaveNotifySwitch">
-          <span class="slider"></span>
-        </label>
-      </label>
+      <div class="form-group">
+        <div class="switch-container">
+          <label for="leaveAllGroups">全てのグループを退出</label>
+          <label class="switch">
+            <input type="checkbox" id="leaveAllGroups">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
 
-      <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
-      <button type="button" class="btn" id="executeBtn">実行</button>
+      <div class="form-group" id="limitGroup">
+        <label for="limit">退出するグループ数 (空欄: すべてのグループ)</label>
+        <input type="number" id="limit" placeholder="数値を入力" min="1">
+      </div>
+
+      <div class="form-group">
+        <div class="switch-container">
+          <label for="nonOwnerLeave">自分が作成者でないグループのみ退出</label>
+          <label class="switch">
+            <input type="checkbox" id="nonOwnerLeave">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="newGroupName">新しいグループ名（任意・変更時のみ）</label>
+        <input type="text" id="newGroupName" placeholder="変更する名前を入力">
+      </div>
+
+      <div class="form-group">
+        <label>グループアイコン変更（任意）</label>
+        <div class="icon-input-wrapper">
+          <label class="custom-file-upload">
+            画像を選択
+            <input type="file" id="newIconFile" accept="image/*">
+          </label>
+          <button type="button" id="clearIconBtn">削除</button>
+          <img id="iconPreview" alt="プレビュー">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="switch-container">
+          <label for="leaveNotifySwitch">退出通知を残す</label>
+          <label class="switch">
+            <input type="checkbox" id="leaveNotifySwitch" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
+        <button type="button" class="btn" id="executeBtn">実行</button>
+      </div>
+      
       <div class="status-box" id="message"></div>
     </form>
+    <div class="footer">
+      <p>注意: トークンはブラウザに保存され、外部には送信されません</p>
+    </div>
   </div>
 
   <script>
-    // 雪アニメーション
-    (()=>{
-      const c=document.getElementById("snow-canvas"), ctx=c.getContext("2d");
-      let w=window.innerWidth, h=window.innerHeight; c.width=w; c.height=h; let wind=0;
-      class S{constructor(){this.reset();}
-        reset(){this.x=Math.random()*w; this.y=Math.random()*h;
-          this.r=Math.random()*3+1; this.vy=Math.random()*1+0.5;
-          this.vx=Math.random()*0.5-0.25; this.o=Math.random()*0.5+0.5;}
-        update(){this.x+=this.vx+wind; this.y+=this.vy;
-          if(this.y>h) this.reset(); if(this.x>w||this.x<0) this.x=(this.x+w)%w;}
-        draw(){ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
-          ctx.fillStyle=`rgba(255,255,255,${this.o})`; ctx.fill();}
-      }
-      const flakes=Array.from({length:200},()=>new S());
-      (function ani(){
-        wind=Math.sin(Date.now()/5000)*0.5;
-        ctx.clearRect(0,0,w,h);
-        flakes.forEach(f=>{f.update(); f.draw();});
-        requestAnimationFrame(ani);
-      })();
-      window.addEventListener("resize",()=>{
-        w=window.innerWidth; h=window.innerHeight; c.width=w; c.height=h;
-      });
-    })();
-
     // Base64 変換ユーティリティ
-    function readFileAsDataURL(file){
-      return new Promise((res, rej)=>{
-        const reader=new FileReader();
-        reader.onload=()=>res(reader.result);
-        reader.onerror=rej;
+    function readFileAsDataURL(file) {
+      return new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
         reader.readAsDataURL(file);
       });
     }
 
     // DOM 要素取得
-    const tokenInput        = document.getElementById("token");
-    const limitInput        = document.getElementById("limit");
-    const nonOwnerCB        = document.getElementById("nonOwnerLeave");
-    const newNameInput      = document.getElementById("newGroupName");
-    const fileInput         = document.getElementById("newIconFile");
-    const clearBtn          = document.getElementById("clearIconBtn");
-    const iconPreview       = document.getElementById("iconPreview");
+    const tokenInput = document.getElementById("token");
+    const toggleTokenBtn = document.getElementById("toggleToken");
+    const limitInput = document.getElementById("limit");
+    const nonOwnerCB = document.getElementById("nonOwnerLeave");
+    const newNameInput = document.getElementById("newGroupName");
+    const fileInput = document.getElementById("newIconFile");
+    const clearBtn = document.getElementById("clearIconBtn");
+    const iconPreview = document.getElementById("iconPreview");
     const leaveNotifySwitch = document.getElementById("leaveNotifySwitch");
-    const checkBtn          = document.getElementById("checkGroupCountBtn");
-    const execBtn           = document.getElementById("executeBtn");
-    const msgBox            = document.getElementById("message");
+    const checkBtn = document.getElementById("checkGroupCountBtn");
+    const execBtn = document.getElementById("executeBtn");
+    const msgBox = document.getElementById("message");
+    const leaveAllGroups = document.getElementById("leaveAllGroups");
+    const limitGroup = document.getElementById("limitGroup");
+
+    // トークン表示切り替え
+    toggleTokenBtn.addEventListener("click", () => {
+      if (tokenInput.type === "password") {
+        tokenInput.type = "text";
+        toggleTokenBtn.innerHTML = `
+          <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 2L22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6.71268 6.7226C3.66479 8.79578 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.2407 20 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+      } else {
+        tokenInput.type = "password";
+        toggleTokenBtn.innerHTML = `
+          <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+      }
+    });
+
+    // ステータス表示関数
+    function addStatusMessage(message, type = "") {
+      const p = document.createElement("p");
+      p.textContent = message;
+      if (type) p.classList.add(type);
+      msgBox.appendChild(p);
+      msgBox.scrollTop = msgBox.scrollHeight;
+    }
 
     // 設定保存
-    function saveSettings(){
-      localStorage.token       = tokenInput.value;
-      localStorage.limit       = limitInput.value;
-      localStorage.nonOwner    = nonOwnerCB.checked;
-      localStorage.newName     = newNameInput.value;
-      localStorage.leaveNotify = leaveNotifySwitch.checked;
+    function saveSettings() {
+      localStorage.setItem("token", tokenInput.value);
+      localStorage.setItem("limit", limitInput.value);
+      localStorage.setItem("nonOwner", nonOwnerCB.checked);
+      localStorage.setItem("newName", newNameInput.value);
+      localStorage.setItem("leaveNotify", leaveNotifySwitch.checked);
+      localStorage.setItem("leaveAllGroups", leaveAllGroups.checked);
     }
-    [tokenInput, limitInput, newNameInput].forEach(el=>el.addEventListener("input", saveSettings));
+
+    // 入力イベントリスナー
+    [tokenInput, limitInput, newNameInput].forEach(el => {
+      el.addEventListener("input", saveSettings);
+    });
+    
     nonOwnerCB.addEventListener("change", saveSettings);
     leaveNotifySwitch.addEventListener("change", saveSettings);
+    leaveAllGroups.addEventListener("change", function() {
+      saveSettings();
+      limitGroup.style.display = this.checked ? "none" : "block";
+    });
 
     // アイコンプレビュー更新
-    function updateIconUI(){
-      const data = localStorage.newIconData;
-      if(data){
+    function updateIconUI() {
+      const data = localStorage.getItem("newIconData");
+      if (data) {
         iconPreview.src = data;
-        iconPreview.style.display = "inline-block";
-        clearBtn.style.display = "inline-block";
+        iconPreview.style.display = "block";
+        clearBtn.style.display = "block";
       } else {
         iconPreview.style.display = "none";
         clearBtn.style.display = "none";
       }
     }
-    window.addEventListener("load", ()=>{
-      tokenInput.value        = localStorage.token || "";
-      limitInput.value        = localStorage.limit || "";
-      nonOwnerCB.checked      = localStorage.nonOwner==="true";
-      newNameInput.value      = localStorage.newName || "";
-      leaveNotifySwitch.checked = localStorage.leaveNotify!=="false";
-      updateIconUI();
-    });
-    fileInput.addEventListener("change", async ()=>{
-      if(fileInput.files[0]){
-        localStorage.newIconData = await readFileAsDataURL(fileInput.files[0]);
+
+    // ページロード時の設定復元
+    window.addEventListener("load", () => {
+      tokenInput.value = localStorage.getItem("token") || "";
+      limitInput.value = localStorage.getItem("limit") || "";
+      nonOwnerCB.checked = localStorage.getItem("nonOwner") === "true";
+      newNameInput.value = localStorage.getItem("newName") || "";
+      leaveNotifySwitch.checked = localStorage.getItem("leaveNotify") !== "false";
+      leaveAllGroups.checked = localStorage.getItem("leaveAllGroups") === "true";
+      
+      // アイコンデータの復元
+      const iconData = localStorage.getItem("newIconData");
+      if (iconData) {
+        iconPreview.src = iconData;
+        iconPreview.style.display = "block";
+        clearBtn.style.display = "block";
       }
-      updateIconUI();
+      
+      // グループ数入力欄の表示制御
+      limitGroup.style.display = leaveAllGroups.checked ? "none" : "block";
     });
-    clearBtn.addEventListener("click", ()=>{
-      delete localStorage.newIconData;
+
+    // ファイル選択処理
+    fileInput.addEventListener("change", async () => {
+      if (fileInput.files[0]) {
+        try {
+          const dataUrl = await readFileAsDataURL(fileInput.files[0]);
+          localStorage.setItem("newIconData", dataUrl);
+          iconPreview.src = dataUrl;
+          iconPreview.style.display = "block";
+          clearBtn.style.display = "block";
+          addStatusMessage("アイコンが設定されました", "success");
+        } catch (error) {
+          addStatusMessage("アイコンの読み込みに失敗しました", "error");
+        }
+      }
+    });
+
+    // アイコン削除処理
+    clearBtn.addEventListener("click", () => {
+      localStorage.removeItem("newIconData");
       fileInput.value = "";
-      msgBox.textContent += "アイコン設定を削除しました。\n";
-      updateIconUI();
+      iconPreview.style.display = "none";
+      clearBtn.style.display = "none";
+      addStatusMessage("アイコン設定を削除しました");
     });
+
+    // ボタンの状態管理
+    function setButtonsState(enabled) {
+      checkBtn.disabled = !enabled;
+      execBtn.disabled = !enabled;
+      nonOwnerCB.disabled = !enabled;
+      newNameInput.disabled = !enabled;
+      fileInput.disabled = !enabled;
+      tokenInput.disabled = !enabled;
+      limitInput.disabled = !enabled;
+      leaveNotifySwitch.disabled = !enabled;
+      leaveAllGroups.disabled = !enabled;
+    }
 
     // グループ数確認
-    checkBtn.addEventListener("click", async ()=>{
-      msgBox.textContent = "";
+    checkBtn.addEventListener("click", async () => {
+      msgBox.innerHTML = "";
       const token = tokenInput.value.trim();
-      if(!token){ msgBox.textContent="Tokenを入力してください。"; return; }
-      try{
+      if (!token) {
+        addStatusMessage("Tokenを入力してください", "error");
+        return;
+      }
+
+      setButtonsState(false);
+      addStatusMessage("グループ情報を取得中...");
+
+      try {
         const res = await fetch("https://discord.com/api/v9/users/@me/channels", {
-          headers:{ Authorization: token }
+          headers: { Authorization: token }
         });
-        if(!res.ok){ msgBox.textContent="取得失敗"; return; }
-        const ch = await res.json();
-        const groups = ch.filter(c=>c.type===3);
-        msgBox.textContent = `現在 ${groups.length} 件のグループDMに参加中。`;
-      } catch {
-        msgBox.textContent="エラー発生";
+
+        if (!res.ok) {
+          const error = await res.json();
+          addStatusMessage(`取得失敗: ${error.message || res.status}`, "error");
+          return;
+        }
+
+        const channels = await res.json();
+        const groups = channels.filter(c => c.type === 3);
+        const ownerGroups = groups.filter(g => g.owner_id === g.recipients[0]?.id);
+        const nonOwnerGroups = groups.filter(g => g.owner_id !== g.recipients[0]?.id);
+
+        addStatusMessage(`現在 ${groups.length} 件のグループDMに参加中`, "success");
+        addStatusMessage(`├─ あなたが作成者: ${ownerGroups.length}件`);
+        addStatusMessage(`└─ 他人が作成者: ${nonOwnerGroups.length}件`);
+      } catch (error) {
+        addStatusMessage("ネットワークエラー: " + error.message, "error");
+      } finally {
+        setButtonsState(true);
       }
     });
 
-    // 実行／停止制御（AbortController）
+    // 実行／停止制御
     let abortController = null;
+
     execBtn.addEventListener("click", async () => {
+      // 停止処理
       if (execBtn.textContent === "停止") {
-        // 停止リクエスト
         if (abortController) {
           abortController.abort();
-          msgBox.textContent += "\n処理を即時中断しています…";
+          addStatusMessage("処理を中断しています...", "warning");
+          execBtn.textContent = "実行";
+          execBtn.classList.remove("stop");
+          setButtonsState(true);
         }
         return;
       }
 
-      // 実行リクエスト
+      // 実行処理
+      msgBox.innerHTML = "";
       execBtn.textContent = "停止";
       execBtn.classList.add("stop");
-      msgBox.textContent   = "";
-      abortController      = new AbortController();
-      const signal         = abortController.signal;
+      setButtonsState(false);
+      abortController = new AbortController();
+      const signal = abortController.signal;
 
       const token = tokenInput.value.trim();
       if (!token) {
-        msgBox.textContent = "Tokenを入力してください。";
-        execBtn.textContent = "実行";
-        execBtn.classList.remove("stop");
+        addStatusMessage("Tokenを入力してください", "error");
+        resetUI();
         return;
       }
 
       try {
-        msgBox.textContent += "ユーザー情報取得...\n";
+        // ユーザー情報取得
+        addStatusMessage("ユーザー情報を確認中...");
         const ures = await fetch("https://discord.com/api/v9/users/@me", {
           headers: { Authorization: token },
           signal
         });
+
         if (!ures.ok) {
-          msgBox.textContent = "無効なTokenです。";
+          const error = await ures.json();
+          addStatusMessage(`エラー: ${error.message || "無効なTokenです"}`, "error");
           return;
         }
-        const me = await ures.json();
 
-        msgBox.textContent += "DM一覧取得...\n";
+        const me = await ures.json();
+        addStatusMessage(`ユーザー: ${me.username}#${me.discriminator}`, "success");
+
+        // DM一覧取得
+        addStatusMessage("グループ一覧を取得中...");
         const cres = await fetch("https://discord.com/api/v9/users/@me/channels", {
           headers: { Authorization: token },
           signal
         });
+
+        if (!cres.ok) {
+          const error = await cres.json();
+          addStatusMessage(`取得失敗: ${error.message || cres.status}`, "error");
+          return;
+        }
+
         const channels = await cres.json();
-        msgBox.textContent += `取得 ${channels.length} 件\n`;
+        addStatusMessage(`取得完了: ${channels.length}件のチャンネル`);
 
         let groups = channels.filter(c => c.type === 3);
         const orig = groups.length;
+        addStatusMessage(`グループDM: ${orig}件`);
+
+        // フィルタリング
         if (nonOwnerCB.checked) {
           groups = groups.filter(c => c.owner_id !== me.id);
-          msgBox.textContent += `作成者でない: ${groups.length}/${orig}\n\n`;
-        } else {
-          msgBox.textContent += `対象: ${groups.length} 件\n\n`;
+          addStatusMessage(`他人が作成したグループ: ${groups.length}件`);
         }
-        if (limitInput.value) {
+
+        // 件数制限
+        if (limitInput.value && !leaveAllGroups.checked) {
           const n = parseInt(limitInput.value, 10);
-          if (!isNaN(n) && n > 0) groups = groups.slice(0, n);
-        }
-        msgBox.textContent += `処理数: ${groups.length} 件\n\n`;
-
-        let iconData = localStorage.newIconData || null;
-        if (fileInput.files[0]) {
-          iconData = await readFileAsDataURL(fileInput.files[0]);
-        }
-
-        for (const ch of groups) {
-          // 更新
-          if (newNameInput.value.trim() || iconData) {
-            msgBox.textContent += `更新 ${ch.id}...\n`;
-            const body = {};
-            if (newNameInput.value.trim()) body.name = newNameInput.value.trim();
-            if (iconData) body.icon = iconData;
-            const up = await fetch(`https://discord.com/api/v9/channels/${ch.id}`, {
-              method: "PATCH",
-              headers: {
-                Authorization: token,
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(body),
-              signal
-            });
-            msgBox.textContent += up.ok ? "更新成功\n" : "更新失敗\n";
+          if (!isNaN(n) && n > 0) {
+            groups = groups.slice(0, n);
+            addStatusMessage(`退出対象: ${groups.length}件 (制限適用)`);
           }
-          // 退出
-          msgBox.textContent += `退出 ${ch.id}...\n`;
-          const silentParam = leaveNotifySwitch.checked ? "" : "?silent=true";
-          const lr = await fetch(
-            `https://discord.com/api/v9/channels/${ch.id}${silentParam}`, {
-              method: "DELETE",
-              headers: { Authorization: token },
-              signal
-            }
-          );
-          msgBox.textContent += lr.ok ? "退出成功\n" : "退出失敗\n";
+        } else {
+          addStatusMessage(`退出対象: ${groups.length}件`);
         }
 
-        msgBox.textContent += `\n完了: ${groups.length} 件`;
-      } catch (err) {
-        if (err.name === "AbortError") {
-          msgBox.textContent += "\n処理を中断しました。\n";
+        if (groups.length === 0) {
+          addStatusMessage("処理対象のグループがありません", "warning");
+          return;
+        }
+
+        // アイコン設定
+        let iconData = localStorage.getItem("newIconData") || null;
+        const newName = newNameInput.value.trim();
+
+        // グループ処理ループ
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const [index, ch] of groups.entries()) {
+          if (signal.aborted) break;
+
+          addStatusMessage(`\n[${index + 1}/${groups.length}] グループ処理中: ${ch.id}`);
+
+          // グループ情報更新
+          if (newName || iconData) {
+            try {
+              const body = {};
+              if (newName) body.name = newName;
+              if (iconData) body.icon = iconData;
+
+              addStatusMessage("グループ情報を更新中...");
+              const upRes = await fetch(`https://discord.com/api/v9/channels/${ch.id}`, {
+                method: "PATCH",
+                headers: {
+                  Authorization: token,
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body),
+                signal
+              });
+
+              if (upRes.ok) {
+                addStatusMessage("グループ情報を更新しました", "success");
+              } else {
+                const error = await upRes.json();
+                addStatusMessage(`更新失敗: ${error.message || upRes.status}`, "error");
+                errorCount++;
+                continue;
+              }
+            } catch (error) {
+              addStatusMessage(`更新エラー: ${error.message}`, "error");
+              errorCount++;
+              continue;
+            }
+          }
+
+          // グループ退出
+          try {
+            const silentParam = leaveNotifySwitch.checked ? "" : "?silent=true";
+            addStatusMessage("グループから退出中...");
+            const lr = await fetch(
+              `https://discord.com/api/v9/channels/${ch.id}${silentParam}`, {
+                method: "DELETE",
+                headers: { Authorization: token },
+                signal
+              }
+            );
+
+            if (lr.ok) {
+              addStatusMessage("グループから退出しました", "success");
+              successCount++;
+            } else {
+              const error = await lr.json();
+              addStatusMessage(`退出失敗: ${error.message || lr.status}`, "error");
+              errorCount++;
+            }
+          } catch (error) {
+            addStatusMessage(`退出エラー: ${error.message}`, "error");
+            errorCount++;
+          }
+        }
+
+        addStatusMessage(`\n処理完了: ${successCount}件成功, ${errorCount}件失敗`, 
+                         errorCount === 0 ? "success" : "warning");
+      } catch (error) {
+        if (error.name === "AbortError") {
+          addStatusMessage("処理が中断されました", "warning");
         } else {
-          console.error(err);
-          msgBox.textContent += "\nエラーが発生しました。\n";
+          addStatusMessage(`エラー: ${error.message}`, "error");
         }
       } finally {
-        execBtn.textContent = "実行";
-        execBtn.classList.remove("stop");
-        abortController = null;
+        resetUI();
       }
     });
+
+    // UI状態リセット
+    function resetUI() {
+      execBtn.textContent = "実行";
+      execBtn.classList.remove("stop");
+      setButtonsState(true);
+      abortController = null;
+    }
   </script>
 </body>
 </html>
