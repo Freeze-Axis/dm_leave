@@ -5,339 +5,857 @@
   <title>Freeze - DMグループ退出ツール</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #00aaff;
-      --primary-dark: #0088cc;
-      --bg-color: #f0f8ff;
-      --text-color: #333;
-      --stop-color: #e74c3c;
-      --stop-dark: #c0392b;
-      --success-color: #2ecc71;
-      --warning-color: #f39c12;
+      --primary-color: #60a5fa;
+      --primary-dark: #3b82f6;
+      --primary-light: #93c5fd;
+      --secondary-color: #a78bfa;
+      --accent-color: #ec4899;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --error-color: #ef4444;
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --border-color: #334155;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      --radius: 12px;
+      --transition: all 0.3s ease;
     }
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    *, *::before, *::after { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+
     html, body {
       font-family: 'Poppins', sans-serif;
       background: var(--bg-color);
-      color: var(--text-color);
+      color: var(--text-primary);
       line-height: 1.6;
       min-height: 100vh;
-      padding-bottom: 20px;
+      transition: var(--transition);
     }
-    nav {
-      position: fixed; top: 0; left: 0; width: 100%;
-      background: var(--primary-color);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      padding: 15px 20px; z-index: 1100;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: var(--transition);
+    }
+
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 15px 0;
     }
-    .logo { font-size: 1.8em; font-weight: 600; color: #fff; }
-    .tool-container {
-      max-width: 550px; margin: 100px auto 40px; padding: 25px 30px;
-      background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-      font-family: 'Roboto Mono', monospace;
-    }
-    .tool-container h1 {
-      font-family: 'Cinzel', serif; text-align: center; margin-bottom: 25px;
-      color: var(--primary-color);
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       font-size: 1.8rem;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      font-weight: 700;
+      color: var(--primary-color);
+      text-decoration: none;
     }
-    .form-group { margin-bottom: 20px; }
-    .tool-container label { 
-      display: block; 
-      margin-bottom: 8px; 
-      font-weight: bold;
-      color: #444;
+
+    .logo img {
+      height: 40px;
+      width: auto;
     }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+      margin: 40px 0;
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Tool Container */
+    .tool-container {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      transition: var(--transition);
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .tool-icon {
+      font-size: 2.2rem;
+      color: var(--primary-color);
+    }
+
+    .tool-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .form-section {
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+    }
+
+    .section-icon {
+      font-size: 1.3rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .label-icon {
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+
     .input-wrapper {
       position: relative;
       margin-bottom: 15px;
     }
-    .tool-container input[type="text"],
-    .tool-container input[type="password"],
-    .tool-container input[type="number"] {
-      width: 100%; padding: 12px 15px; 
-      border: 1px solid #ddd; border-radius: 8px;
-      background: #fff; font-size: 0.95rem;
-      transition: border 0.3s, box-shadow 0.3s;
+
+    .form-input {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      transition: var(--transition);
     }
-    .tool-container input:focus { 
-      border-color: var(--primary-color); 
+
+    .form-input:focus {
+      border-color: var(--primary-color);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
     }
+
     .password-container {
       display: flex;
       align-items: center;
     }
+
     .password-container input {
       flex: 1;
       padding-right: 45px;
     }
+
     .toggle-password {
       position: absolute;
-      right: 8px;
-      top: 8px;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
       background: none;
       border: none;
-      color: #777;
+      color: var(--text-secondary);
       cursor: pointer;
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .toggle-password svg {
-      width: 100%;
-      height: 100%;
-    }
-    .eye-icon {
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .tool-container .btn {
-      width: 100%; padding: 12px; font-size: 1rem; font-weight: bold;
-      border: none; border-radius: 8px; cursor: pointer;
-      background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-      color: #fff; margin-bottom: 12px;
-      transition: all 0.2s;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    }
-    .tool-container .btn:hover { 
-      background: linear-gradient(45deg, var(--primary-dark), var(--primary-color)); 
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      transform: translateY(-2px);
-    }
-    .tool-container .btn:active {
-      transform: translateY(0);
-    }
-    .tool-container .btn:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    .tool-container .btn.stop {
-      background: linear-gradient(45deg, var(--stop-color), var(--stop-dark));
-    }
-    .tool-container .btn.stop:hover {
-      background: linear-gradient(45deg, var(--stop-dark), var(--stop-color));
-    }
-    .tool-container .status-box {
-      background: #f8f9ff; border: 1px solid #d0e0ff;
-      border-radius: 8px; padding: 15px; margin-top: 20px;
-      min-height: 150px; max-height: 300px; overflow-y: auto;
-      white-space: pre-wrap; font-size: 0.85rem;
-      line-height: 1.5;
-      font-family: 'Roboto Mono', monospace;
-    }
-    .tool-container .status-box .success {
-      color: var(--success-color);
-    }
-    .tool-container .status-box .error {
-      color: var(--stop-color);
-    }
-    .tool-container .status-box .warning {
-      color: var(--warning-color);
-    }
-    .icon-input-wrapper { 
-      display: flex; 
-      align-items: center; 
-      margin-bottom: 15px;
-      gap: 10px;
-    }
-    .custom-file-upload input[type="file"] { display: none; }
-    .custom-file-upload {
-      display: inline-block; padding: 8px 16px;
-      background: var(--primary-color); color: #fff;
-      border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
-      user-select: none; 
-      transition: background 0.2s;
-    }
-    .custom-file-upload:hover { background: var(--primary-dark); }
-    #clearIconBtn {
-      padding: 8px 14px; font-size: 0.85rem;
-      background: #999; color: #fff; border: none; border-radius: 6px;
-      cursor: pointer; 
-      transition: background 0.2s;
-    }
-    #clearIconBtn:hover { background: #777; }
-    #iconPreview {
-      max-width: 48px; max-height: 48px;
-      border: 1px solid #ddd; border-radius: 6px;
-      object-fit: contain;
-      background: #f5f5f5;
-      display: none;
-    }
-    .switch-container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      user-select: none;
-    }
-    .switch {
-      position: relative; display: inline-block; width: 50px; height: 24px;
-      vertical-align: middle; margin-left: 10px;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #ccc; transition: 0.2s; border-radius: 24px;
-    }
-    .slider:before {
-      position: absolute; content: ""; height: 18px; width: 18px;
-      left: 3px; bottom: 3px; background-color: white; transition: 0.2s;
-      border-radius: 50%;
-    }
-    input:checked + .slider { background-color: var(--primary-color); }
-    input:checked + .slider:before { transform: translateX(26px); }
-    .footer {
-      text-align: center;
-      margin-top: 25px;
-      color: #777;
-      font-size: 0.85rem;
-    }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .btn-group .btn {
-      flex: 1;
+      font-size: 1.2rem;
     }
 
-    @media (max-width: 600px) {
-      .tool-container {
-        margin: 90px 15px 30px;
-        padding: 20px;
+    .switch-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .switch-container:hover {
+      background: rgba(96, 165, 250, 0.1);
+    }
+
+    .switch-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #475569;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .icon-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .custom-file-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .custom-file-upload:hover {
+      background: var(--primary-dark);
+    }
+
+    .file-icon {
+      font-size: 1rem;
+    }
+
+    #clearIconBtn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    #clearIconBtn:hover {
+      background: #dc2626;
+    }
+
+    #iconPreview {
+      width: 50px;
+      height: 50px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--bg-color);
+    }
+
+    .file-status {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-left: 10px;
+    }
+
+    .btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--secondary-color), #6d28d9);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #6d28d9, var(--secondary-color));
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, var(--error-color), #dc2626);
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-stop:hover {
+      background: linear-gradient(135deg, #dc2626, var(--error-color));
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .status-container {
+      margin-top: 30px;
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .status-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .clear-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .clear-btn:hover {
+      color: var(--error-color);
+    }
+
+    .status-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .status-line {
+      margin-bottom: 8px;
+      /* padding-left: 20px; 削除可 */
+      /* position: relative; 削除可 */
+    }
+
+    .status-success {
+      color: var(--success-color);
+    }
+
+    .status-error {
+      color: var(--error-color);
+    }
+
+    .status-warning {
+      color: var(--warning-color);
+    }
+
+    .status-info {
+      color: var(--primary-color);
+    }
+
+    /* Info Panel */
+    .info-panel {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 25px;
+      transition: var(--transition);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-icon {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+    }
+
+    .panel-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .info-item {
+      margin-bottom: 20px;
+    }
+
+    .info-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .info-icon {
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .info-content {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding-left: 28px;
+    }
+
+    .progress-container {
+      margin: 25px 0;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--bg-color);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 25px 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-color);
+      margin-top: 40px;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        padding: 12px 0;
       }
-      nav {
-        padding: 12px 15px;
-      }
+      
       .logo {
         font-size: 1.5rem;
       }
-      .tool-container h1 {
+      
+      .logo img {
+        height: 32px;
+      }
+      
+      .tool-container, .info-panel {
+        padding: 20px;
+      }
+      
+      .btn-group {
+        grid-template-columns: 1fr;
+      }
+      
+      .tool-title {
         font-size: 1.5rem;
       }
-      .btn-group {
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .tool-header {
         flex-direction: column;
-        gap: 8px;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .icon-input-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">Freeze</div>
-  </nav>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <img src="https://i.ibb.co/39dXLvV3/Freeze-logo.png" alt="Freeze Logo">
+          <span>Freeze</span>
+        </a>
+      </div>
+    </div>
+  </header>
 
-  <div class="tool-container">
-    <h1>DMグループ退出ツール</h1>
-    <form id="leaveForm">
-      <div class="form-group">
-        <label for="token">Discord Token</label>
-        <div class="input-wrapper">
-          <div class="password-container">
-            <input type="password" id="token" placeholder="トークンを入力" autocomplete="off">
-            <button type="button" class="toggle-password" id="toggleToken">
-              <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+  <div class="container">
+    <div class="main-content">
+      <div class="tool-container">
+        <div class="tool-header">
+          <i class="fas fa-comments tool-icon"></i>
+          <h1 class="tool-title">DMグループ退出ツール</h1>
+        </div>
+
+        <form id="leaveForm">
+          <div class="form-section">
+            <h2 class="section-title">
+              <i class="fas fa-key section-icon"></i>
+              認証情報
+            </h2>
+            
+            <div class="form-group">
+              <label for="token" class="form-label">
+                <i class="fas fa-fingerprint label-icon"></i>
+                Discord Token
+              </label>
+              <div class="input-wrapper">
+                <div class="password-container">
+                  <input type="password" id="token" class="form-input" placeholder="トークンを入力してください" autocomplete="off">
+                  <button type="button" class="toggle-password" id="toggleToken">
+                    <i class="far fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-title">
+              <i class="fas fa-sliders-h section-icon"></i>
+              退出設定
+            </h2>
+            
+            <div class="form-group" id="limitGroup">
+              <label for="limit" class="form-label">
+                <i class="fas fa-hashtag label-icon"></i>
+                退出するグループ数
+              </label>
+              <input type="number" id="limit" class="form-input" placeholder="空欄の場合はすべてのグループを退出します" min="1">
+            </div>
+
+            <div class="switch-container">
+              <label class="switch-label">
+                <i class="fas fa-users"></i>
+                全てのグループを退出
+              </label>
+              <label class="switch">
+                <input type="checkbox" id="leaveAllGroups">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="switch-container">
+              <label class="switch-label">
+                <i class="fas fa-crown"></i>
+                自分が作成者でないグループのみ退出
+              </label>
+              <label class="switch">
+                <input type="checkbox" id="nonOwnerLeave">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="switch-container">
+              <label class="switch-label">
+                <i class="fas fa-bell"></i>
+                退出通知を残す
+              </label>
+              <label class="switch">
+                <input type="checkbox" id="leaveNotifySwitch" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2 class="section-title">
+              <i class="fas fa-pencil-alt section-icon"></i>
+              グループ設定（オプション）
+            </h2>
+            
+            <div class="form-group">
+              <label for="newGroupName" class="form-label">
+                <i class="fas fa-tag label-icon"></i>
+                新しいグループ名
+              </label>
+              <input type="text" id="newGroupName" class="form-input" placeholder="退出前にグループ名を変更します">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-image label-icon"></i>
+                グループアイコン
+              </label>
+              <div class="icon-input-wrapper">
+                <label class="custom-file-upload">
+                  <i class="fas fa-upload file-icon"></i>
+                  画像を選択
+                  <input type="file" id="newIconFile" accept="image/*">
+                </label>
+                <span class="file-status" id="fileStatus">選択されていません</span>
+                <button type="button" id="clearIconBtn" style="display: none;">
+                  <i class="fas fa-trash"></i>
+                  削除
+                </button>
+                <img id="iconPreview" alt="アイコンプレビュー" style="display: none;">
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="button" class="btn btn-secondary" id="checkGroupCountBtn">
+              <i class="fas fa-list"></i>
+              グループ数確認
             </button>
+            <button type="button" class="btn btn-primary" id="executeBtn">
+              <i class="fas fa-play"></i>
+              実行
+            </button>
+          </div>
+        </form>
+
+        <div class="status-container">
+          <div class="status-header">
+            <h3 class="status-title">処理ステータス</h3>
+            <button class="clear-btn" id="clearStatusBtn">
+              <i class="fas fa-trash-alt"></i>
+              クリア
+            </button>
+          </div>
+          <div class="status-box" id="message"></div>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="panel-header">
+          <i class="fas fa-info-circle panel-icon"></i>
+          <h2 class="panel-title">情報パネル</h2>
+        </div>
+
+        <div class="info-item">
+          <h3 class="info-title">
+            <i class="fas fa-tachometer-alt info-icon"></i>
+            進捗状況
+          </h3>
+          <div class="progress-container">
+            <div class="progress-info">
+              <span>処理中: <span id="processedCount">0</span></span>
+              <span>合計: <span id="totalCount">0</span></span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <h3 class="info-title">
+            <i class="fas fa-check-circle info-icon"></i>
+            ステータス概要
+          </h3>
+          <div class="info-content">
+            <p><i class="fas fa-check status-success"></i> 成功: <span id="successCount">0</span></p>
+            <p><i class="fas fa-times status-error"></i> 失敗: <span id="errorCount">0</span></p>
+            <p><i class="fas fa-clock status-info"></i> 残り: <span id="remainingCount">0</span></p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <h3 class="info-title">
+            <i class="fas fa-lightbulb info-icon"></i>
+            使い方
+          </h3>
+          <div class="info-content">
+            <p>1. Discordトークンを入力します</p>
+            <p>2. 退出設定を調整します</p>
+            <p>3. 「グループ数確認」で現在の状態を確認</p>
+            <p>4. 「実行」をクリックして処理を開始</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <h3 class="info-title">
+            <i class="fas fa-shield-alt info-icon"></i>
+            セキュリティ情報
+          </h3>
+          <div class="info-content">
+            <p>• トークンはブラウザにのみ保存されます</p>
+            <p>• 外部サーバーに送信されることはありません</p>
+            <p>• 処理はすべてクライアント側で実行されます</p>
           </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <div class="switch-container">
-          <label for="leaveAllGroups">全てのグループを退出</label>
-          <label class="switch">
-            <input type="checkbox" id="leaveAllGroups">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="form-group" id="limitGroup">
-        <label for="limit">退出するグループ数 (空欄: すべてのグループ)</label>
-        <input type="number" id="limit" placeholder="数値を入力" min="1">
-      </div>
-
-      <div class="form-group">
-        <div class="switch-container">
-          <label for="nonOwnerLeave">自分が作成者でないグループのみ退出</label>
-          <label class="switch">
-            <input type="checkbox" id="nonOwnerLeave">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="newGroupName">新しいグループ名（任意・変更時のみ）</label>
-        <input type="text" id="newGroupName" placeholder="変更する名前を入力">
-      </div>
-
-      <div class="form-group">
-        <label>グループアイコン変更（任意）</label>
-        <div class="icon-input-wrapper">
-          <label class="custom-file-upload">
-            画像を選択
-            <input type="file" id="newIconFile" accept="image/*">
-          </label>
-          <button type="button" id="clearIconBtn">削除</button>
-          <img id="iconPreview" alt="プレビュー">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="switch-container">
-          <label for="leaveNotifySwitch">退出通知を残す</label>
-          <label class="switch">
-            <input type="checkbox" id="leaveNotifySwitch" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button type="button" class="btn" id="checkGroupCountBtn">グループ数確認</button>
-        <button type="button" class="btn" id="executeBtn">実行</button>
-      </div>
-      
-      <div class="status-box" id="message"></div>
-    </form>
-    <div class="footer">
-      <p>注意: トークンはブラウザに保存され、外部には送信されません</p>
     </div>
   </div>
 
-  <script>
-    // Base64 変換ユーティリティ
-    function readFileAsDataURL(file) {
-      return new Promise((res, rej) => {
-        const reader = new FileReader();
-        reader.onload = () => res(reader.result);
-        reader.onerror = rej;
-        reader.readAsDataURL(file);
-      });
-    }
+  <footer class="footer">
+    <div class="container">
+      <p id="footerCopyright"></p>
+    </div>
+  </footer>
 
-    // DOM 要素取得
+  <script>
+  // フッター年自動表示
+  document.getElementById("footerCopyright").textContent = `Freeze - DMグループ退出ツール © ${new Date().getFullYear()}`;
+
+  // DOM 要素取得
     const tokenInput = document.getElementById("token");
     const toggleTokenBtn = document.getElementById("toggleToken");
     const limitInput = document.getElementById("limit");
@@ -352,36 +870,62 @@
     const msgBox = document.getElementById("message");
     const leaveAllGroups = document.getElementById("leaveAllGroups");
     const limitGroup = document.getElementById("limitGroup");
+    const clearStatusBtn = document.getElementById("clearStatusBtn");
+    const fileStatus = document.getElementById("fileStatus");
+    
+    // 進捗表示用要素
+    const processedCount = document.getElementById("processedCount");
+    const totalCount = document.getElementById("totalCount");
+    const progressFill = document.getElementById("progressFill");
+    const successCount = document.getElementById("successCount");
+    const errorCount = document.getElementById("errorCount");
+    const remainingCount = document.getElementById("remainingCount");
 
     // トークン表示切り替え
     toggleTokenBtn.addEventListener("click", () => {
       if (tokenInput.type === "password") {
         tokenInput.type = "text";
-        toggleTokenBtn.innerHTML = `
-          <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 2L22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M6.71268 6.7226C3.66479 8.79578 2 12 2 12C2 12 5.63636 19 12 19C14.0503 19 15.8174 18.2734 17.2711 17.2884" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M11 5.05822C11.3254 5.02013 11.6588 5 12 5C18.3636 5 22 12 22 12C22 12 21.3082 13.2407 20 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        `;
+        toggleTokenBtn.innerHTML = '<i class="far fa-eye-slash"></i>';
       } else {
         tokenInput.type = "password";
-        toggleTokenBtn.innerHTML = `
-          <svg class="eye-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5C5.63636 5 2 12 2 12C2 12 5.63636 19 12 19C18.3636 19 22 12 22 12C22 12 18.3636 5 12 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        `;
+        toggleTokenBtn.innerHTML = '<i class="far fa-eye"></i>';
       }
     });
 
     // ステータス表示関数
     function addStatusMessage(message, type = "") {
       const p = document.createElement("p");
-      p.textContent = message;
-      if (type) p.classList.add(type);
+      p.className = `status-line ${type ? 'status-' + type : ''}`;
+      p.innerHTML = `<i class="fas ${getStatusIcon(type)}"></i> ${message}`;
+      // 追加前に一番下までスクロールされているか判定
+      const isAtBottom = (msgBox.scrollTop + msgBox.clientHeight) >= (msgBox.scrollHeight - 2);
       msgBox.appendChild(p);
-      msgBox.scrollTop = msgBox.scrollHeight;
+      // 一番下までスクロールされていた場合のみ自動スクロール
+      if (isAtBottom) {
+        msgBox.scrollTop = msgBox.scrollHeight;
+      }
+    }
+
+    // ステータスタイプに応じたアイコンを取得
+    function getStatusIcon(type) {
+      switch(type) {
+        case "success": return "fa-check-circle";
+        case "error": return "fa-times-circle";
+        case "warning": return "fa-exclamation-triangle";
+        default: return "fa-info-circle";
+      }
+    }
+
+    // 進捗状況の更新
+    function updateProgress(current, total, successes, errors) {
+      processedCount.textContent = current;
+      totalCount.textContent = total;
+      successCount.textContent = successes;
+      errorCount.textContent = errors;
+      remainingCount.textContent = total - current;
+      
+      const progressPercent = total > 0 ? (current / total) * 100 : 0;
+      progressFill.style.width = `${progressPercent}%`;
     }
 
     // 設定保存
@@ -399,11 +943,18 @@
       el.addEventListener("input", saveSettings);
     });
     
-    nonOwnerCB.addEventListener("change", saveSettings);
-    leaveNotifySwitch.addEventListener("change", saveSettings);
+    [nonOwnerCB, leaveNotifySwitch, leaveAllGroups].forEach(el => {
+      el.addEventListener("change", saveSettings);
+    });
+    
     leaveAllGroups.addEventListener("change", function() {
       saveSettings();
       limitGroup.style.display = this.checked ? "none" : "block";
+    });
+
+    // ステータスクリア
+    clearStatusBtn.addEventListener("click", () => {
+      msgBox.innerHTML = "";
     });
 
     // アイコンプレビュー更新
@@ -412,11 +963,23 @@
       if (data) {
         iconPreview.src = data;
         iconPreview.style.display = "block";
-        clearBtn.style.display = "block";
+        clearBtn.style.display = "flex";
+        fileStatus.style.display = "none";
       } else {
         iconPreview.style.display = "none";
         clearBtn.style.display = "none";
+        fileStatus.style.display = "inline";
       }
+    }
+
+    // Base64 変換ユーティリティ
+    function readFileAsDataURL(file) {
+      return new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.onerror = rej;
+        reader.readAsDataURL(file);
+      });
     }
 
     // ページロード時の設定復元
@@ -433,7 +996,12 @@
       if (iconData) {
         iconPreview.src = iconData;
         iconPreview.style.display = "block";
-        clearBtn.style.display = "block";
+        clearBtn.style.display = "flex";
+        fileStatus.style.display = "none";
+      } else {
+        iconPreview.style.display = "none";
+        clearBtn.style.display = "none";
+        fileStatus.style.display = "inline";
       }
       
       // グループ数入力欄の表示制御
@@ -448,7 +1016,8 @@
           localStorage.setItem("newIconData", dataUrl);
           iconPreview.src = dataUrl;
           iconPreview.style.display = "block";
-          clearBtn.style.display = "block";
+          clearBtn.style.display = "flex";
+          fileStatus.style.display = "none";
           addStatusMessage("アイコンが設定されました", "success");
         } catch (error) {
           addStatusMessage("アイコンの読み込みに失敗しました", "error");
@@ -462,20 +1031,27 @@
       fileInput.value = "";
       iconPreview.style.display = "none";
       clearBtn.style.display = "none";
+      fileStatus.style.display = "inline";
       addStatusMessage("アイコン設定を削除しました");
     });
 
     // ボタンの状態管理
     function setButtonsState(enabled) {
-      checkBtn.disabled = !enabled;
-      execBtn.disabled = !enabled;
-      nonOwnerCB.disabled = !enabled;
-      newNameInput.disabled = !enabled;
-      fileInput.disabled = !enabled;
-      tokenInput.disabled = !enabled;
-      limitInput.disabled = !enabled;
-      leaveNotifySwitch.disabled = !enabled;
-      leaveAllGroups.disabled = !enabled;
+  checkBtn.disabled = !enabled;
+  // 実行中は停止ボタンを押せるようにする
+  if (isProcessing) {
+    execBtn.disabled = false;
+  } else {
+    execBtn.disabled = !enabled;
+  }
+  nonOwnerCB.disabled = !enabled;
+  newNameInput.disabled = !enabled;
+  fileInput.disabled = !enabled;
+  tokenInput.disabled = !enabled;
+  limitInput.disabled = !enabled;
+  leaveNotifySwitch.disabled = !enabled;
+  leaveAllGroups.disabled = !enabled;
+  // execBtnの表示切り替えはイベントハンドラ側でのみ行う
     }
 
     // グループ数確認
@@ -488,7 +1064,7 @@
       }
 
       setButtonsState(false);
-      addStatusMessage("グループ情報を取得中...");
+      addStatusMessage("グループ情報を取得中...", "info");
 
       try {
         const res = await fetch("https://discord.com/api/v9/users/@me/channels", {
@@ -503,8 +1079,24 @@
 
         const channels = await res.json();
         const groups = channels.filter(c => c.type === 3);
-        const ownerGroups = groups.filter(g => g.owner_id === g.recipients[0]?.id);
-        const nonOwnerGroups = groups.filter(g => g.owner_id !== g.recipients[0]?.id);
+
+        // ユーザー情報取得
+        let me = null;
+        try {
+          const ures = await fetch("https://discord.com/api/v9/users/@me", {
+            headers: { Authorization: token }
+          });
+          if (ures.ok) {
+            me = await ures.json();
+          }
+        } catch {}
+
+        let ownerGroups = [];
+        let nonOwnerGroups = [];
+        if (me) {
+          ownerGroups = groups.filter(g => g.owner_id === me.id);
+          nonOwnerGroups = groups.filter(g => g.owner_id !== me.id);
+        }
 
         addStatusMessage(`現在 ${groups.length} 件のグループDMに参加中`, "success");
         addStatusMessage(`├─ あなたが作成者: ${ownerGroups.length}件`);
@@ -518,24 +1110,27 @@
 
     // 実行／停止制御
     let abortController = null;
+    let isProcessing = false;
 
     execBtn.addEventListener("click", async () => {
       // 停止処理
-      if (execBtn.textContent === "停止") {
+      if (isProcessing) {
         if (abortController) {
           abortController.abort();
           addStatusMessage("処理を中断しています...", "warning");
-          execBtn.textContent = "実行";
-          execBtn.classList.remove("stop");
+          isProcessing = false;
+          execBtn.innerHTML = '<i class="fas fa-play"></i> 実行';
+          execBtn.className = 'btn btn-primary';
           setButtonsState(true);
         }
         return;
       }
 
       // 実行処理
+      isProcessing = true;
       msgBox.innerHTML = "";
-      execBtn.textContent = "停止";
-      execBtn.classList.add("stop");
+      execBtn.innerHTML = '<i class="fas fa-stop"></i> 停止';
+      execBtn.className = 'btn btn-stop';
       setButtonsState(false);
       abortController = new AbortController();
       const signal = abortController.signal;
@@ -549,7 +1144,7 @@
 
       try {
         // ユーザー情報取得
-        addStatusMessage("ユーザー情報を確認中...");
+        addStatusMessage("ユーザー情報を確認中...", "info");
         const ures = await fetch("https://discord.com/api/v9/users/@me", {
           headers: { Authorization: token },
           signal
@@ -561,11 +1156,14 @@
           return;
         }
 
-        const me = await ures.json();
-        addStatusMessage(`ユーザー: ${me.username}#${me.discriminator}`, "success");
+  const me = await ures.json();
+  // 「グローバルネーム（ユーザーネーム）」の形で表示
+  const globalName = me.global_name || "";
+  const userName = me.username || "";
+  addStatusMessage(`ユーザー: ${globalName}（${userName}）`, "success");
 
         // DM一覧取得
-        addStatusMessage("グループ一覧を取得中...");
+        addStatusMessage("グループ一覧を取得中...", "info");
         const cres = await fetch("https://discord.com/api/v9/users/@me/channels", {
           headers: { Authorization: token },
           signal
@@ -578,7 +1176,7 @@
         }
 
         const channels = await cres.json();
-        addStatusMessage(`取得完了: ${channels.length}件のチャンネル`);
+        addStatusMessage(`取得完了: ${channels.length}件のチャンネル`, "success");
 
         let groups = channels.filter(c => c.type === 3);
         const orig = groups.length;
@@ -595,7 +1193,7 @@
           const n = parseInt(limitInput.value, 10);
           if (!isNaN(n) && n > 0) {
             groups = groups.slice(0, n);
-            addStatusMessage(`退出対象: ${groups.length}件 (制限適用)`);
+            addStatusMessage(`退出対象: ${groups.length}件 (制限適用)`, "info");
           }
         } else {
           addStatusMessage(`退出対象: ${groups.length}件`);
@@ -606,6 +1204,9 @@
           return;
         }
 
+        // 進捗表示の初期化
+        updateProgress(0, groups.length, 0, 0);
+
         // アイコン設定
         let iconData = localStorage.getItem("newIconData") || null;
         const newName = newNameInput.value.trim();
@@ -614,10 +1215,15 @@
         let successCount = 0;
         let errorCount = 0;
 
+        let processed = 0;
+        let aborted = false;
         for (const [index, ch] of groups.entries()) {
-          if (signal.aborted) break;
+          if (signal.aborted) {
+            aborted = true;
+            break;
+          }
 
-          addStatusMessage(`\n[${index + 1}/${groups.length}] グループ処理中: ${ch.id}`);
+          addStatusMessage(`[${processed + 1}/${groups.length}] グループ処理中: ${ch.id}`, "info");
 
           // グループ情報更新
           if (newName || iconData) {
@@ -643,11 +1249,19 @@
                 const error = await upRes.json();
                 addStatusMessage(`更新失敗: ${error.message || upRes.status}`, "error");
                 errorCount++;
+                processed++;
+                updateProgress(successCount + errorCount, groups.length, successCount, errorCount);
                 continue;
               }
             } catch (error) {
+              if (error.name === "AbortError") {
+                aborted = true;
+                break;
+              }
               addStatusMessage(`更新エラー: ${error.message}`, "error");
               errorCount++;
+              processed++;
+              updateProgress(successCount + errorCount, groups.length, successCount, errorCount);
               continue;
             }
           }
@@ -672,13 +1286,26 @@
               addStatusMessage(`退出失敗: ${error.message || lr.status}`, "error");
               errorCount++;
             }
+            processed++;
+            updateProgress(successCount + errorCount, groups.length, successCount, errorCount);
           } catch (error) {
+            if (error.name === "AbortError") {
+              aborted = true;
+              break;
+            }
             addStatusMessage(`退出エラー: ${error.message}`, "error");
             errorCount++;
+            processed++;
+            updateProgress(successCount + errorCount, groups.length, successCount, errorCount);
           }
         }
 
-        addStatusMessage(`\n処理完了: ${successCount}件成功, ${errorCount}件失敗`, 
+        // 完全停止：中断時はその時点で進捗・件数表示を止める
+        updateProgress(successCount + errorCount, groups.length, successCount, errorCount);
+        if (aborted) {
+          addStatusMessage("処理が中断されました", "warning");
+        }
+        addStatusMessage(`処理完了: ${successCount}件成功, ${errorCount}件失敗`, 
                          errorCount === 0 ? "success" : "warning");
       } catch (error) {
         if (error.name === "AbortError") {
@@ -693,10 +1320,11 @@
 
     // UI状態リセット
     function resetUI() {
-      execBtn.textContent = "実行";
-      execBtn.classList.remove("stop");
-      setButtonsState(true);
-      abortController = null;
+  isProcessing = false;
+  execBtn.innerHTML = '<i class="fas fa-play"></i> 実行';
+  execBtn.className = 'btn btn-primary';
+  setButtonsState(true);
+  abortController = null;
     }
   </script>
 </body>
